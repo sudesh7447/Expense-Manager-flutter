@@ -6,7 +6,10 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:op/data.dart';
 import 'package:op/home.dart';
+import 'package:op/home_page.dart';
 import 'package:op/login.dart';
+import 'package:op/services/auth_helper.dart';
+import 'package:op/services/my_user_info.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({Key? key}) : super(key: key);
@@ -16,6 +19,10 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,22 +42,57 @@ class _SignUpState extends State<SignUp> {
                 height: 50,
               ),
               RoundedInputField(
+                hintText: 'Enter username',
+                icon: Icons.person,
+                controller: usernameController,
+              ),
+              SizedBox(height: 1),
+              RoundedInputField(
                 hintText: 'Enter email',
                 icon: Icons.email,
+                controller: emailController,
               ),
-              SizedBox(
-                height: 1,
-              ),
+              SizedBox(height: 1),
               RoundedInputField(
                 hintText: 'Enter password',
                 icon: Icons.password,
+                controller: passwordController,
               ),
               SizedBox(
                 height: 10,
               ),
               RoundedButton(
                 text: 'Submit',
-                press: () {},
+                press: () async {
+                  await AuthHelper()
+                      .signUp(
+                          email: emailController.text,
+                          password: passwordController.text)
+                      .then((value) async {
+                    if (value == null) {
+                      MyUserInfo().storeUserDetails(
+                          username: usernameController.text,
+                          email: emailController.text,
+                          password: passwordController.text);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomePage(),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.purple,
+                          content: Text(
+                            value.toString(),
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      );
+                    }
+                  });
+                },
                 color: Color(0xFF6F35A5),
               ),
               SizedBox(

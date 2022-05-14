@@ -6,8 +6,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:op/data.dart';
 import 'package:op/home.dart';
-import 'package:op/home_page.dart';
-import 'package:op/services/auth_helper.dart';
 import 'package:op/signup.dart';
 
 class Login extends StatefulWidget {
@@ -18,9 +16,6 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,7 +37,6 @@ class _LoginState extends State<Login> {
                 RoundedInputField(
                   hintText: 'Enter email',
                   icon: Icons.email,
-                  controller: emailController,
                 ),
                 SizedBox(
                   height: 1,
@@ -50,7 +44,6 @@ class _LoginState extends State<Login> {
                 RoundedInputField(
                   hintText: 'Enter password',
                   icon: Icons.password,
-                  controller: passwordController,
                 ),
                 SizedBox(
                   height: 10,
@@ -58,13 +51,9 @@ class _LoginState extends State<Login> {
                 RoundedButton(
                   text: 'Submit',
                   press: () {
-                    AuthHelper().signIn(
-                        email: emailController.text,
-                        password: passwordController.text);
-
-                    Navigator.pushReplacement(
+                    Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => HomePage()),
+                      MaterialPageRoute(builder: (context) => Home()),
                     );
                   },
                   color: Color(0xFF6F35A5),

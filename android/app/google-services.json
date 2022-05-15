@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "808042856516",
+    "project_id": "expense-manager-firebase-972a5",
+    "storage_bucket": "expense-manager-firebase-972a5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:808042856516:android:8deef765f295026da63c11",
+        "android_client_info": {
+          "package_name": "com.example.op"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "808042856516-5cjuagt8v97vh7trt2e5ifq48g9h26qs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1mV6nVK4tDYSjwJP3bLT9d3pTaSY8eIo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "808042856516-5cjuagt8v97vh7trt2e5ifq48g9h26qs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -5,13 +5,11 @@ class RoundedButton extends StatelessWidget {
   final Function press;
   final Color color, textColor;
   RoundedButton({
-  required this.text,
-  required this.press,
-  required this.color,
-  this.textColor = Colors.white,
-
-});
-
+    required this.text,
+    required this.press,
+    required this.color,
+    this.textColor = Colors.white,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -49,9 +47,9 @@ class RoundedButton extends StatelessWidget {
 
 class TextFieldContainer extends StatelessWidget {
   final Widget child;
-TextFieldContainer({
+  TextFieldContainer({
     required this.child,
-});
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -72,22 +70,28 @@ TextFieldContainer({
 class RoundedInputField extends StatelessWidget {
   final String hintText;
   final IconData icon;
+  final TextEditingController controller;
+  final FormFieldValidator validator;
   // final ValueChanged<String> onChanged;
   RoundedInputField({
-   required this.hintText,required this.icon ,
+    required this.hintText,
+    required this.icon,
+    required this.controller,
+    required this.validator,
     // required this.onChanged
-});
+  });
 
   @override
   Widget build(BuildContext context) {
     return TextFieldContainer(
       child: TextField(
         // onChanged: onChanged,
-        cursorColor:  Color(0xFF6F35A5),
+        controller: controller,
+        cursorColor: Color(0xFF6F35A5),
         decoration: InputDecoration(
           icon: Icon(
             icon,
-            color:  Color(0xFF6F35A5),
+            color: Color(0xFF6F35A5),
           ),
           hintText: hintText,
           border: InputBorder.none,

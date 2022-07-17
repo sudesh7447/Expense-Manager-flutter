@@ -34,11 +34,16 @@ class _SignUpState extends State<SignUp> {
 
   submitform(String email, String password) async {
     final auth = FirebaseAuth.instance;
-
     UserCredential authResult;
     try {
-      authResult = await auth.createUserWithEmailAndPassword(
-          email: email, password: password);
+      await auth
+          .createUserWithEmailAndPassword(email: email, password: password)
+          .then((value) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Home()),
+        );
+      });
     } catch (error) {
       print(error);
     }

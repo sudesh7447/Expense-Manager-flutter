@@ -20,9 +20,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // print(user!.uid.toString());
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: user != null ? Landing() : Home(),
+      home: user == null ? Landing() : Home(),
       // home: BottomNavScreen(),
     );
   }

@@ -1,10 +1,16 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:op/add_ex.dart';
 import 'package:op/landing.dart';
+
+User? user = FirebaseAuth.instance.currentUser;
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -14,6 +20,48 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  String uid = user!.uid;
+  int spending = 0;
+  int income = 0;
+
+  @override
+  void initState() {
+    getuid();
+    super.initState();
+  }
+
+  getuid() async {
+    final User? user = await FirebaseAuth.instance.currentUser;
+    setState(() {
+      uid = user!.uid;
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    FirebaseFirestore.instance
+        .collection('transactions')
+        .doc(uid)
+        .collection('mytransactions')
+        .get()
+        .then((value) {
+      print(value.docs.length);
+      for (int i = 0; i < value.docs.length; i++) {
+        if (value.docs[i]['type'].toString() == 'Income') {
+          income += int.parse(value.docs[i]['Value']);
+        } else {
+          spending += int.parse(value.docs[i]['Value']);
+        }
+      }
+      setState(() {
+        income = income;
+        spending;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -133,7 +181,7 @@ class _HomeState extends State<Home> {
                                     color: Colors.white),
                               ),
                               Text(
-                                '₹11,196',
+                                '₹' + spending.toString(),
                                 style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.w600,
@@ -175,7 +223,7 @@ class _HomeState extends State<Home> {
                                     color: Colors.white),
                               ),
                               Text(
-                                '₹5,000',
+                                '₹' + income.toString(),
                                 style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.w600,
@@ -201,11 +249,24 @@ class _HomeState extends State<Home> {
                             color: Color(0xFF3A3A3A)),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(right: 25),
-                        child: Icon(
-                          CupertinoIcons.book_circle_fill,
-                          color: Color(0xFF1E1E99),
-                          size: 37.0,
+                        padding: const EdgeInsets.only(right: 20),
+                        child: Center(
+                          child: Container(
+                            height: 30,
+                            width: 90,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(40),
+                                color: Color(0xFF1E1E99)),
+                            child: Center(
+                              child: Text(
+                                'See All',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -214,66 +275,156 @@ class _HomeState extends State<Home> {
                 SizedBox(
                   height: 15,
                 ),
-                ListView.builder(
-                  physics: BouncingScrollPhysics(),
-                  scrollDirection: Axis.vertical,
-                  itemCount: 4,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      height: 70,
-                      margin: EdgeInsets.only(bottom: 13),
-                      padding: EdgeInsets.only(
-                          left: 24, top: 12, bottom: 12, right: 22),
-                      decoration: BoxDecoration(
-                        color: Color(0xFFFFFFFF),
-                        borderRadius: BorderRadius.circular(15),
-                        boxShadow: [
-                          BoxShadow(
-                            blurRadius: 10,
-                            spreadRadius: 5,
-                            color: Color(0x10000000),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                  padding: EdgeInsets.only(left: 16, right: 16),
-                  shrinkWrap: true,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 300),
-                  child: Text(
-                    'See all',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xFF1E1E99),
-                    ),
+                Container(
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('transactions')
+                        .doc(uid)
+                        .collection('mytransactions')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else {
+                        final docData = snapshot.data!.docs;
+                        final len = docData.length;
+
+                        return ListView.builder(
+                          // reverse: true,
+                          // physics: NeverScrollableScrollPhysics(),
+                          itemCount: min(docData.length, 5),
+                          itemBuilder: (context, index) {
+                            return Container(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        CupertinoIcons
+                                            .arrow_up_arrow_down_circle_fill,
+                                        color: Colors.lightGreen,
+                                        size: 45.0,
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Column(
+                                        children: [
+                                          Text(
+                                            "₹" +
+                                                docData[len - index - 1]
+                                                    ['Value'],
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w700,
+                                                color: Color(0xFF3A3A3A)),
+                                          ),
+                                          Text(
+                                            docData[len - index - 1]['type'],
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w600,
+                                                color: Color(0xFF3A3A3A)),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      Text(
+                                        docData[len - index - 1]['Date']
+                                            .toString()
+                                            .substring(0, 10),
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                            color: Color(0xFF3A3A3A)),
+                                      ),
+                                      SizedBox(
+                                        height: 6,
+                                      ),
+                                      GestureDetector(
+                                        child: Icon(
+                                          Icons.delete,
+                                          color: Colors.red,
+                                          size: 26,
+                                        ),
+                                        onTap: () async {
+                                          await FirebaseFirestore.instance
+                                              .collection('transactions')
+                                              .doc(uid)
+                                              .collection('mytransactions')
+                                              .doc(docData[len - index - 1]
+                                                  ['timestamp'])
+                                              .delete();
+                                          print(docData[len - index - 1]
+                                              ['timestamp']);
+                                          didChangeDependencies();
+                                        },
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                              height: 70,
+                              margin: EdgeInsets.only(bottom: 13),
+                              padding: EdgeInsets.only(
+                                  left: 24, top: 12, bottom: 12, right: 22),
+                              decoration: BoxDecoration(
+                                color: Color(0xFFFFFFFF),
+                                borderRadius: BorderRadius.circular(15),
+                                boxShadow: [
+                                  BoxShadow(
+                                    blurRadius: 10,
+                                    spreadRadius: 5,
+                                    color: Color(0x10000000),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          padding: EdgeInsets.only(left: 16, right: 16),
+                          shrinkWrap: true,
+                        );
+                      }
+                    },
                   ),
-                )
+                ),
               ],
             ),
           ),
-          Container(
-            height: 70,
-            color: Colors.black.withOpacity(0.9),
-            child: Row(
-              children: [
-                SizedBox(width: 10),
-                Icon(
-                  Icons.menu,
-                  color: Colors.white,
-                  size: 35,
-                )
-              ],
-            ),
-          ),
+
+          // Container(
+          //   height: 70,
+          //   color: Colors.black.withOpacity(0.9),
+          //   child: Row(
+          //     children: [
+          //       SizedBox(width: 10),
+          //       Icon(
+          //         Icons.menu,
+          //         color: Colors.white,
+          //         size: 35,
+          //       )
+          //     ],
+          //   ),
+          // ),
           Positioned(
             right: 30,
-            bottom: 35,
+            bottom: 19,
             child: FloatingActionButton(
               backgroundColor: Color(0xFF1E1E99),
-              onPressed: () {},
+              onPressed: () => showDialog(
+                context: context,
+                builder: (context) => AddTodoDialogWidget(),
+                barrierDismissible: false,
+              ),
               child: Icon(
                 Icons.add,
                 color: Colors.white,

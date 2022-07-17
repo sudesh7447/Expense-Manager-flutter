@@ -24,17 +24,26 @@ class _LoginState extends State<Login> {
     FocusScope.of(context).unfocus();
     if (validity) {
       _formkey.currentState!.save();
-      submitform(emailcontroller.toString(), passwordcontroller.toString());
-    } else {}
+      submitform(emailcontroller.text, passwordcontroller.text);
+    } else {
+      print("Not valid");
+    }
   }
 
   submitform(String email, String password) async {
     final auth = FirebaseAuth.instance;
+    print(email);
 
     UserCredential authResult;
     try {
-      authResult = await auth.signInWithEmailAndPassword(
-          email: email, password: password);
+      await auth
+          .signInWithEmailAndPassword(email: email, password: password)
+          .then((value) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Home()),
+        );
+      });
     } catch (error) {
       print(error);
     }
@@ -94,12 +103,9 @@ class _LoginState extends State<Login> {
                     height: 10,
                   ),
                   RoundedButton(
-                    text: 'Submit',
-                    press: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Home()),
-                      );
+                    text: 'Login',
+                    press: () async {
+                      await startauth();
                     },
                     color: Color(0xFF6F35A5),
                   ),

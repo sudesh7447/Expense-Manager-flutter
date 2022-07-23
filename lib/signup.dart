@@ -69,7 +69,7 @@ class _SignUpState extends State<SignUp> {
                 SizedBox(
                   height: 50,
                 ),
-                RoundedInputField(
+                AmountRoundedInputField(
                   hintText: 'Enter email',
                   icon: Icons.email,
                   controller: emailcontroller,
@@ -85,7 +85,7 @@ class _SignUpState extends State<SignUp> {
                 SizedBox(
                   height: 1,
                 ),
-                RoundedInputField(
+                AmountRoundedInputField(
                   hintText: 'Enter password',
                   icon: Icons.password,
                   controller: passwordcontroller,

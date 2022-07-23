@@ -141,3 +141,38 @@ class AddRoundedInputField extends StatelessWidget {
     );
   }
 }
+
+class AmountRoundedInputField extends StatelessWidget {
+  final String hintText;
+  final IconData icon;
+  final TextEditingController controller;
+  final FormFieldValidator validator;
+  // final ValueChanged<String> onChanged;
+  AmountRoundedInputField({
+    required this.hintText,
+    required this.icon,
+    required this.controller,
+    required this.validator,
+    // required this.onChanged
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFieldContainer(
+      child: TextField(
+        // onChanged: onChanged,
+        keyboardType: TextInputType.number,
+        controller: controller,
+        cursorColor: Color(0xFF6F35A5),
+        decoration: InputDecoration(
+          icon: Icon(
+            icon,
+            color: Color(0xFF6F35A5),
+          ),
+          hintText: hintText,
+          border: InputBorder.none,
+        ),
+      ),
+    );
+  }
+}

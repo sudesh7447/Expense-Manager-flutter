@@ -100,7 +100,8 @@ class _AddTodoDialogWidgetState extends State<AddTodoDialogWidget> {
                           return null;
                         }
                       }),
-                  RoundedInputField(
+                  AmountRoundedInputField(
+
                       hintText: 'Enter Amount',
                       icon: Icons.currency_rupee,
                       controller: Amountcontroller,

@@ -10,6 +10,8 @@ import 'package:flutter/widgets.dart';
 import 'package:op/add_ex.dart';
 import 'package:op/landing.dart';
 
+import 'profile/profile_page.dart';
+
 User? user = FirebaseAuth.instance.currentUser;
 
 class Home extends StatefulWidget {
@@ -20,7 +22,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  String uid = user!.uid;
+  String? uid = user?.uid;
   int spending = 0;
   int income = 0;
 
@@ -48,6 +50,11 @@ class _HomeState extends State<Home> {
         .get()
         .then((value) {
       print(value.docs.length);
+
+      setState(() {
+        income = 0;
+        spending = 0;
+      });
       for (int i = 0; i < value.docs.length; i++) {
         if (value.docs[i]['type'].toString() == 'Income') {
           income += int.parse(value.docs[i]['Value']);
@@ -99,12 +106,18 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                       GestureDetector(
-                        onTap: () async {
-                          await FirebaseAuth.instance.signOut();
-                          Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                  builder: (context) => Landing()),
-                              (Route<dynamic> route) => false);
+                        // onTap: () async {
+                        //   await FirebaseAuth.instance.signOut();
+                        //   Navigator.of(context).pushAndRemoveUntil(
+                        //       MaterialPageRoute(
+                        //           builder: (context) => Landing()),
+                        //       (Route<dynamic> route) => false);
+                        // },
+                        onTap: (){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => ProfileScreen()),
+                          );
                         },
                         child: Container(
                           height: 59,
@@ -308,7 +321,7 @@ class _HomeState extends State<Home> {
                                       Icon(
                                         CupertinoIcons
                                             .arrow_up_arrow_down_circle_fill,
-                                        color: Colors.lightGreen,
+                                        color:docData[len - index - 1]['type'] == 'Income' ? Colors.lightGreen : Colors.redAccent,
                                         size: 45.0,
                                       ),
                                       SizedBox(
@@ -401,20 +414,7 @@ class _HomeState extends State<Home> {
             ),
           ),
 
-          // Container(
-          //   height: 70,
-          //   color: Colors.black.withOpacity(0.9),
-          //   child: Row(
-          //     children: [
-          //       SizedBox(width: 10),
-          //       Icon(
-          //         Icons.menu,
-          //         color: Colors.white,
-          //         size: 35,
-          //       )
-          //     ],
-          //   ),
-          // ),
+
           Positioned(
             right: 30,
             bottom: 19,
